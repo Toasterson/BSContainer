@@ -35,13 +35,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # 2. Use the tag command to rename the local container to match our Azure Container Registry URL
+      # 2. Use the tag command to rename the local container to match our GitHub Container Registry URL
       - name: Tag built container with GitHub Registry Url
-        uses: actions-hub/docker/cli@master
-        with:
-          args: tag bscontainer:1.0.0 ${{ steps.meta.outputs.tags }}
-      # 3. Push the renamed container to ACR.
-      - name: Push built container to Azure Container Registry
-        uses: actions-hub/docker/cli@master
-        with:
-          args: push ${{ steps.meta.outputs.tags }}
+        run: docker tag bscontainer:1.0.0 ${{ steps.meta.outputs.tags }}
+      # 3. Push the renamed container to GHCR.
+      - name: Push built container to GitHub Container Registry
+        run: docker push ${{ steps.meta.outputs.tags }}
