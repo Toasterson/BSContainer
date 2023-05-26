@@ -15,12 +15,12 @@ jobs:
       # Because we don't yet support pushing to authenticated registries, we have to use docker to
       # login, tag and push the image. In the future none of these steps will be required!
       # 1. Login to our registry so we can push the image. Could use a raw docker command as well.
-      - name: Docker Login
-        uses: actions-hub/docker/login@master
-        env:
-          DOCKER_REGISTRY_URL: sdkcontainerdemo.azurecr.io
-          DOCKER_USERNAME: ${{ secrets.ACR_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.ACR_PAT }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Repository Variable to Lowercase
         id: string
         uses: ASzc/change-string-case-action@v1
