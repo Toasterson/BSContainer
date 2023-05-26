@@ -9,6 +9,6 @@ entries:
     name: bscontainer
     type: application
     urls:
-    - https://toasterson.github.io/bscontainer/bscontainer-0.1.0.tgz
+    - https://toasterson.github.io/BSContainer/bscontainer-0.1.0.tgz
     version: 0.1.0
 generated: "2023-05-27T01:02:46.047753042+02:00"
