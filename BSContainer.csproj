@@ -9,9 +9,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.302" />
   </ItemGroup>
-
-  <PropertyGroup>
-      <ContainerRegistry>registry.gitlab.com/toastys-homelab/bscontainer</ContainerRegistry>
-  </PropertyGroup>
-
 </Project>
