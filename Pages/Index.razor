@@ -1,0 +1,17 @@
+@page "/"
+<PageTitle>Index</PageTitle>
+<h1>Hallo iX-Leser*in,</h1>
+<p>diese Blazor Server App läuft  
+@if (System.Environment.GetEnvironmentVariable
+  ("DOTNET_RUNNING_IN_CONTAINER")=="true")
+{ <text><b>im Container </b></text> }
+else
+{ <text>nicht im Container </text> }
+mit
+@System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription 
+auf @System.Runtime.InteropServices.RuntimeInformation.OSDescription!
+</p>
+<p>Prozess: 
+@System.Diagnostics.Process.GetCurrentProcess().ProcessName<br>
+Prozessidentität: 
+@System.Environment.UserDomainName\@System.Environment.UserName</p>
