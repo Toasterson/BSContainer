@@ -2,6 +2,7 @@ stages:
 - build
 - test
 
+image: mcr.microsoft.com/dotnet/sdk:7.0
 # ### Define variables
 #
 variables:
@@ -70,7 +71,7 @@ before_script:
   - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.16
+  #image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.16
   services:
     - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.16-dind
       alias: docker
