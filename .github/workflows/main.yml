@@ -1,0 +1,55 @@
+name: Containerize ASP.NET Core application
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v2
+      # Package the app into a linux-x64 container based on the dotnet/aspnet image
+      - name: Publish
+        run: dotnet publish --os linux --arch x64 --configuration Release -p:PublishProfile=DefaultContainer
+      # Because we don't yet support pushing to authenticated registries, we have to use docker to
+      # login, tag and push the image. In the future none of these steps will be required!
+      # 1. Login to our registry so we can push the image. Could use a raw docker command as well.
+      - name: Docker Login
+        uses: actions-hub/docker/login@master
+        env:
+          DOCKER_REGISTRY_URL: sdkcontainerdemo.azurecr.io
+          DOCKER_USERNAME: ${{ secrets.ACR_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.ACR_PAT }}
+      - name: Repository Variable to Lowercase
+        id: string
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ github.repository }}
+      - name: Login to GitHub Container Registry
+        uses: actions-hub/docker/login@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          github-token: ${{ inputs.token }}
+          images: ghcr.io/${{ steps.string.outputs.lowercase }}
+          tags: |
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{major}}.{{minor}}
+            type=semver,pattern=v{{major}}
+            type=sha
+      - name: Push built container to Azure Container Registry
+        uses: actions-hub/docker/cli@master
+        with:
+          args: push ${{ steps.meta.outputs.tags }}
