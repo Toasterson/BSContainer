@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-      <ContainerRegistry>registry.gitlab.com/toastys-homelab/BSContainer</ContainerRegistry>
+      <ContainerRegistry>registry.gitlab.com/toastys-homelab/bscontainer</ContainerRegistry>
   </PropertyGroup>
 
 </Project>
