@@ -3,12 +3,12 @@ entries:
   bscontainer:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-05-27T01:48:43.442183699+02:00"
+    created: "2023-05-27T01:51:01.853627872+02:00"
     description: Deploy a small dotnet container to kubernetes
-    digest: b9a88200dc055c487784baa7926c0f46b24858581e98753ae232ba27a8cffd7b
+    digest: ab03bf71c517e710925410e6d4caa96137d89cbb3bbcde723bf400f3e4a85de9
     name: bscontainer
     type: application
     urls:
     - https://toasterson.github.io/BSContainer/bscontainer-0.1.0.tgz
     version: 0.1.0
-generated: "2023-05-27T01:48:43.441715341+02:00"
+generated: "2023-05-27T01:51:01.853155686+02:00"
