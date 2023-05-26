@@ -2,9 +2,16 @@ name: Containerize ASP.NET Core application
 
 on: [push]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET SDK
@@ -15,40 +22,25 @@ jobs:
       # Because we don't yet support pushing to authenticated registries, we have to use docker to
       # login, tag and push the image. In the future none of these steps will be required!
       # 1. Login to our registry so we can push the image. Could use a raw docker command as well.
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Repository Variable to Lowercase
-        id: string
-        uses: ASzc/change-string-case-action@v1
-        with:
-          string: ${{ github.repository }}
-      - name: Login to GitHub Container Registry
-        uses: actions-hub/docker/login@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Docker meta
+
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          github-token: ${{ inputs.token }}
-          images: ghcr.io/${{ steps.string.outputs.lowercase }}
-          tags: |
-            # set latest tag for default branch
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
-            type=semver,pattern=v{{version}}
-            type=semver,pattern=v{{major}}.{{minor}}
-            type=semver,pattern=v{{major}}
-            type=sha
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # 2. Use the tag command to rename the local container to match our Azure Container Registry URL
+      - name: Tag built container with GitHub Registry Url
+        uses: actions-hub/docker/cli@master
+        with:
+          args: tag bscontainer:1.0.0 ${{ steps.meta.outputs.tags }}
+      # 3. Push the renamed container to ACR.
       - name: Push built container to Azure Container Registry
         uses: actions-hub/docker/cli@master
         with:
